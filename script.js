@@ -95,49 +95,38 @@ function showModal(events, date) {
   const modalInstance = new bootstrap.Modal(modal);
   modalInstance.show();
 
+  // Adjust modal size based on screen size
+  adjustModalSize();
+
+  // Adjust modal size when window is resized
+  window.addEventListener('resize', adjustModalSize);
+
   modal.addEventListener('hidden.bs.modal', function () {
     eventList.innerHTML = '';
+    window.removeEventListener('resize', adjustModalSize);
   });
 }
 
-// เพิ่มฟังก์ชันนี้เพื่อปิด modal เมื่อคลิกนอก modal
-document.addEventListener('click', function (event) {
+function adjustModalSize() {
   const modal = document.getElementById('eventModal');
-  if (event.target === modal) {
-    const modalInstance = bootstrap.Modal.getInstance(modal);
-    modalInstance.hide();
+  const modalDialog = modal.querySelector('.modal-dialog');
+  const modalContent = modal.querySelector('.modal-content');
+  const modalBody = modal.querySelector('.modal-body');
+
+  // Reset any previously set styles
+  modalDialog.style.height = '';
+  modalContent.style.height = '';
+  modalBody.style.maxHeight = '';
+
+  if (window.innerWidth <= 600) {
+    // For mobile devices
+    modalDialog.style.height = `${window.innerHeight - 20}px`;
+    modalContent.style.height = '100%';
+    const headerHeight = modal.querySelector('.modal-header').offsetHeight;
+    const footerHeight = modal.querySelector('.modal-footer').offsetHeight;
+    modalBody.style.maxHeight = `calc(100% - ${headerHeight + footerHeight}px)`;
+  } else {
+    // For larger screens
+    modalBody.style.maxHeight = `calc(80vh - 120px)`;  // Adjust 120px based on your header and footer height
   }
-});
-
-// ปรับปรุงฟังก์ชัน generateCalendar() เพื่อเพิ่ม tooltip สำหรับวันที่มีกิจกรรม
-function generateCalendar() {
-  // ... (โค้ดส่วนอื่นๆ ยังคงเหมือนเดิม)
-
-  for (let day = 1; day <= daysInMonth; day++) {
-    const dayElement = createDayElement(day);
-    const date = new Date(year, month, day);
-    const dayEvents = events.filter(e => new Date(e.date).toDateString() === date.toDateString());
-    
-    if (dayEvents.length > 0) {
-      dayElement.classList.add('has-events');
-      const eventIndicator = document.createElement('div');
-      eventIndicator.classList.add('event-indicator');
-      eventIndicator.textContent = dayEvents.length;
-      dayElement.appendChild(eventIndicator);
-
-      // เพิ่ม tooltip
-      dayElement.setAttribute('data-bs-toggle', 'tooltip');
-      dayElement.setAttribute('data-bs-placement', 'top');
-      dayElement.setAttribute('title', `${dayEvents.length} event${dayEvents.length > 1 ? 's' : ''}`);
-    }
-
-    dayElement.addEventListener('click', () => showModal(dayEvents, date));
-    calendar.appendChild(dayElement);
-  }
-
-  // เริ่มการทำงานของ tooltips
-  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl);
-  });
 }
