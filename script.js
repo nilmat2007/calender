@@ -1,5 +1,5 @@
 // API URL from Google Apps Script
-const apiUrl = 'YOUR_GOOGLE_APPS_SCRIPT_API_URL';
+const apiUrl = 'https://script.google.com/macros/s/AKfycbziJEkqg_ybK0ioco5120m5591wZ7EcsM0Bu7op3UYKH-gCQdtmF3EO3tCqJrKBK5x9/exec';
 
 // Fetch event data from the API
 fetch(apiUrl)
