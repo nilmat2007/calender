@@ -1,5 +1,5 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -96,33 +96,15 @@ body {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1000;
+  overflow-y: auto;
 }
 
 .modal-dialog {
   position: relative;
   width: auto;
-  margin: 0.5rem;
+  margin: 1.75rem auto;
+  max-width: 500px;
   pointer-events: none;
-}
-
-.modal-dialog-centered {
-  display: flex;
-  align-items: center;
-  min-height: calc(100% - 1rem);
-}
-
-.modal-dialog-scrollable {
-  display: flex;
-  max-height: calc(100% - 1rem);
-}
-
-.modal-dialog-scrollable .modal-content {
-  max-height: calc(100vh - 1rem);
-  overflow: hidden;
-}
-
-.modal-dialog-scrollable .modal-body {
-  overflow-y: auto;
 }
 
 .modal-content {
@@ -134,26 +116,28 @@ body {
   background-color: #fff;
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 0.3rem;
+  border-radius: 0.5rem;
   outline: 0;
-  max-width: 500px;
-  margin: auto;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
 .modal-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   padding: 1rem;
   border-bottom: 1px solid #dee2e6;
-  border-top-left-radius: 0.3rem;
-  border-top-right-radius: 0.3rem;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  background-color: #f8f9fa;
 }
 
 .modal-body {
   position: relative;
   flex: 1 1 auto;
   padding: 1rem;
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
 .close {
@@ -168,6 +152,11 @@ body {
   background: none;
   border: none;
   padding: 1rem;
+  transition: opacity 0.15s;
+}
+
+.close:hover {
+  opacity: 0.75;
 }
 
 .event-item {
@@ -178,40 +167,37 @@ body {
 
 .event-item:last-child {
   border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .event-image {
   max-width: 100%;
   height: auto;
-  border-radius: 5px;
+  border-radius: 0.25rem;
   margin-top: 10px;
+  object-fit: cover;
 }
 
-@media (min-width: 576px) {
+@media (max-width: 576px) {
   .modal-dialog {
-    max-width: 500px;
-    margin: 1.75rem auto;
+    margin: 1rem;
+    max-width: calc(100% - 2rem);
   }
 
-  .modal-dialog-scrollable {
-    max-height: calc(100% - 3.5rem);
-  }
-
-  .modal-dialog-centered {
-    min-height: calc(100% - 3.5rem);
+  .modal-body {
+    max-height: calc(100vh - 10rem);
   }
 }
 
-@media (max-width: 600px) {
-  .calendar-container {
-    width: 95%;
+@media (min-width: 577px) and (max-width: 992px) {
+  .modal-dialog {
+    max-width: 90%;
   }
+}
 
-  .day {
-    font-size: 1em;
-  }
-
-  .modal-content {
-    width: 95%;
+@media (min-width: 993px) {
+  .modal-dialog {
+    max-width: 600px;
   }
 }
