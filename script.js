@@ -71,14 +71,14 @@ function showModal(events, date) {
   const modal = document.getElementById('eventModal');
   const modalDate = document.getElementById('modalDate');
   const eventList = document.getElementById('eventList');
-  const modalTitle = document.querySelector('.modal-title');
+  const modalTitle = modal.querySelector('.modal-title');
 
   modalTitle.textContent = 'Event Details';
   modalDate.textContent = date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   eventList.innerHTML = '';
 
   if (events.length === 0) {
-    eventList.innerHTML = '<p>No events for this day.</p>';
+    eventList.innerHTML = '<p class="text-muted">No events scheduled for this day.</p>';
   } else {
     events.forEach(event => {
       const eventElement = document.createElement('div');
@@ -92,19 +92,52 @@ function showModal(events, date) {
     });
   }
 
-  modal.classList.add('show');
-  document.body.classList.add('modal-open');
+  const modalInstance = new bootstrap.Modal(modal);
+  modalInstance.show();
 
-  const closeButton = modal.querySelector('.btn-close');
-  closeButton.onclick = () => {
-    modal.classList.remove('show');
-    document.body.classList.remove('modal-open');
-  };
+  modal.addEventListener('hidden.bs.modal', function () {
+    eventList.innerHTML = '';
+  });
+}
 
-  window.onclick = (event) => {
-    if (event.target == modal) {
-      modal.classList.remove('show');
-      document.body.classList.remove('modal-open');
+// เพิ่มฟังก์ชันนี้เพื่อปิด modal เมื่อคลิกนอก modal
+document.addEventListener('click', function (event) {
+  const modal = document.getElementById('eventModal');
+  if (event.target === modal) {
+    const modalInstance = bootstrap.Modal.getInstance(modal);
+    modalInstance.hide();
+  }
+});
+
+// ปรับปรุงฟังก์ชัน generateCalendar() เพื่อเพิ่ม tooltip สำหรับวันที่มีกิจกรรม
+function generateCalendar() {
+  // ... (โค้ดส่วนอื่นๆ ยังคงเหมือนเดิม)
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayElement = createDayElement(day);
+    const date = new Date(year, month, day);
+    const dayEvents = events.filter(e => new Date(e.date).toDateString() === date.toDateString());
+    
+    if (dayEvents.length > 0) {
+      dayElement.classList.add('has-events');
+      const eventIndicator = document.createElement('div');
+      eventIndicator.classList.add('event-indicator');
+      eventIndicator.textContent = dayEvents.length;
+      dayElement.appendChild(eventIndicator);
+
+      // เพิ่ม tooltip
+      dayElement.setAttribute('data-bs-toggle', 'tooltip');
+      dayElement.setAttribute('data-bs-placement', 'top');
+      dayElement.setAttribute('title', `${dayEvents.length} event${dayEvents.length > 1 ? 's' : ''}`);
     }
-  };
+
+    dayElement.addEventListener('click', () => showModal(dayEvents, date));
+    calendar.appendChild(dayElement);
+  }
+
+  // เริ่มการทำงานของ tooltips
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
 }
