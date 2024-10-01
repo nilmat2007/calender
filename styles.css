@@ -96,16 +96,19 @@ body {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1000;
+  overflow-y: auto; /* เพิ่มการเลื่อนแนวตั้ง */
 }
 
 .modal-content {
   background-color: white;
-  margin: 10% auto;
+  margin: 5% auto; /* ลดระยะห่างด้านบนลงเพื่อให้เห็นเนื้อหามากขึ้น */
   padding: 20px;
-  width: 80%;
-  max-width: 600px;
+  width: 90%; /* เพิ่มความกว้างเป็น 90% ของหน้าจอ */
+  max-width: 800px; /* เพิ่ม max-width เพื่อจำกัดขนาดสูงสุด */
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  max-height: 80vh; /* จำกัดความสูงสูงสุดเป็น 80% ของความสูงหน้าจอ */
+  overflow-y: auto; /* เพิ่มการเลื่อนภายใน modal ถ้าเนื้อหายาวเกินไป */
 }
 
 .close {
@@ -144,5 +147,6 @@ body {
   .modal-content {
     width: 95%;
     margin: 5% auto;
+    padding: 15px; /* ลด padding เล็กน้อยสำหรับหน้าจอขนาดเล็ก */
   }
 }
