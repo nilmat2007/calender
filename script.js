@@ -11,27 +11,19 @@ fetch(apiUrl)
 // Generate the calendar
 function generateCalendar(events) {
   const calendar = document.getElementById('calendar');
-  const daysInMonth = 31;  // Adjust according to the month
+  const daysInMonth = 31;  // ปรับตามเดือน
   for (let day = 1; day <= daysInMonth; day++) {
     const dayDiv = document.createElement('div');
     dayDiv.classList.add('day');
     dayDiv.textContent = day;
 
-    const dayEvents = events.filter(e => new Date(e.date).getDate() === day);
-    if (dayEvents.length > 0) {
-      dayDiv.classList.add('has-events');
-      const indicator = document.createElement('span');
-      indicator.classList.add('event-indicator');
-      indicator.textContent = dayEvents.length;
-      dayDiv.appendChild(indicator);
-    }
-
     // Add click event listener for each day
     dayDiv.addEventListener('click', () => {
-      if (dayEvents.length > 0) {
-        showModal(dayEvents, day);
+      const event = events.find(e => new Date(e.date).getDate() === day);
+      if (event) {
+        showModal(event);
       } else {
-        showModal([{ event: "No Event", details: "No events scheduled for this day." }], day);
+        showModal({ event: "No Event", details: "No details available for this day." });
       }
     });
 
@@ -40,42 +32,23 @@ function generateCalendar(events) {
 }
 
 // Show the modal with event details
-function showModal(events, day) {
+function showModal(event) {
   const modal = document.getElementById('eventModal');
-  const modalDate = document.getElementById('modalDate');
-  const eventList = document.getElementById('eventList');
+  document.getElementById('eventTitle').textContent = event.event;
+  document.getElementById('eventDetails').textContent = event.details;
 
-  modalDate.textContent = `Events for Day ${day}`;
-  eventList.innerHTML = '';
-
-  events.forEach(event => {
-    const eventItem = document.createElement('div');
-    eventItem.classList.add('event-item');
-
-    const eventTitle = document.createElement('h3');
-    eventTitle.textContent = event.event;
-    eventItem.appendChild(eventTitle);
-
-    const eventDetails = document.createElement('p');
-    eventDetails.textContent = event.details;
-    eventItem.appendChild(eventDetails);
-
-    if (event.image) {
-      const eventImage = document.createElement('img');
-      eventImage.src = event.image;
-      eventImage.alt = event.event;
-      eventImage.classList.add('event-image');
-      eventItem.appendChild(eventImage);
-    }
-
-    eventList.appendChild(eventItem);
-  });
+  const eventImage = document.getElementById('eventImage');
+  if (event.image) {
+    eventImage.src = event.image;
+    eventImage.style.display = 'block';
+  } else {
+    eventImage.style.display = 'none';
+  }
 
   modal.style.display = 'block';
 
   // Close the modal
-  const closeBtn = modal.querySelector('.close');
-  closeBtn.onclick = () => {
+  document.querySelector('.close').onclick = () => {
     modal.style.display = 'none';
   };
 
