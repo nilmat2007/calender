@@ -3,43 +3,144 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Modern Event Calendar</title>
-  <link rel="icon" href="https://th.bing.com/th/id/OIG4.QbUR8N98pPSmXzzUykuK?dpr=3&pid=ImgDetMain" type="image/x-icon">
-  <link rel="shortcut icon" href="https://th.bing.com/th/id/OIG4.QbUR8N98pPSmXzzUykuK?dpr=3&pid=ImgDetMain" type="image/x-icon">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="styles.css">
+  <title>Event Slider</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #141414;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .slider-container {
+      width: 90%;
+      max-width: 1200px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slider {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .slide {
+      min-width: 100%;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .slide img {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+
+    .slide h2 {
+      margin: 20px 0;
+    }
+
+    .slide p {
+      margin-bottom: 20px;
+    }
+
+    .controls {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+    }
+
+    .controls button {
+      background-color: rgba(255, 255, 255, 0.5);
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .controls button:hover {
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    @media (max-width: 768px) {
+      .slide {
+        padding: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .slide h2 {
+        font-size: 18px;
+      }
+
+      .slide p {
+        font-size: 14px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="calendar-container">
-    <div class="calendar-header">
-      <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
-      <h2 id="currentMonth"></h2>
-      <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
-    </div>
-    <div class="weekdays">
-      <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
-    </div>
-    <div id="calendar"></div>
-  </div>
 
-  <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="eventModalLabel">Event Details</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <h2 id="modalDate" class="mb-4"></h2>
-          <div id="eventList" class="event-list"></div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
+  <div class="slider-container">
+    <div class="slider" id="slider"></div>
+    <div class="controls">
+      <button onclick="prevSlide()">❮</button>
+      <button onclick="nextSlide()">❯</button>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    let currentSlide = 0;
+
+    // Fetch data from Google Sheets
+    fetch('https://script.google.com/macros/s/AKfycbziJEkqg_ybK0ioco5120m5591wZ7EcsM0Bu7op3UYKH-gCQdtmF3EO3tCqJrKBK5x9/exec')
+      .then(response => response.json())
+      .then(data => {
+        const slider = document.getElementById('slider');
+        data.forEach(item => {
+          const slide = document.createElement('div');
+          slide.classList.add('slide');
+          slide.innerHTML = `
+            <h2>${item.event}</h2>
+            <p>${item.date}</p>
+            <p>${item.details}</p>
+            ${item.image ? `<img src="${item.image}" alt="${item.event}">` : ''}
+          `;
+          slider.appendChild(slide);
+        });
+      });
+
+    function updateSlidePosition() {
+      const slider = document.getElementById('slider');
+      slider.style.transform = `translateX(${-currentSlide * 100}%)`;
+    }
+
+    function nextSlide() {
+      const slides = document.querySelectorAll('.slide');
+      currentSlide = (currentSlide + 1) % slides.length;
+      updateSlidePosition();
+    }
+
+    function prevSlide() {
+      const slides = document.querySelectorAll('.slide');
+      currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+      updateSlidePosition();
+    }
+  </script>
 </body>
 </html>
