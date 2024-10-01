@@ -71,7 +71,9 @@ function showModal(events, date) {
   const modal = document.getElementById('eventModal');
   const modalDate = document.getElementById('modalDate');
   const eventList = document.getElementById('eventList');
+  const modalTitle = document.querySelector('.modal-title');
 
+  modalTitle.textContent = 'Event Details';
   modalDate.textContent = date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   eventList.innerHTML = '';
 
@@ -90,15 +92,19 @@ function showModal(events, date) {
     });
   }
 
-  modal.style.display = 'block';
+  modal.classList.add('show');
+  document.body.classList.add('modal-open');
 
-  document.querySelector('.close').onclick = () => {
-    modal.style.display = 'none';
+  const closeButton = modal.querySelector('.btn-close');
+  closeButton.onclick = () => {
+    modal.classList.remove('show');
+    document.body.classList.remove('modal-open');
   };
 
   window.onclick = (event) => {
     if (event.target == modal) {
-      modal.style.display = 'none';
+      modal.classList.remove('show');
+      document.body.classList.remove('modal-open');
     }
   };
 }
